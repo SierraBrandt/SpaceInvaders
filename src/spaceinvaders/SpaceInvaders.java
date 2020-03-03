@@ -21,11 +21,15 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	int cannonXPos;
 	int cannonYPos;
 	int ballY;
-	int cannonBallXPos[] = new int[15];
-	int cannonBallYPos[] = new int[15];
-	int invaderXPos[] = new int[10];
-	int invaderYPos[] = new int[10];
-	boolean cannonBallActive[] = new boolean[15];
+        int cannonBallNum=25;
+        int invaderNum=10;
+	int cannonBallXPos[] = new int[cannonBallNum];
+	int cannonBallYPos[] = new int[cannonBallNum];
+        boolean cannonBallActive[] = new boolean[cannonBallNum];
+        
+	int invaderXPos[] = new int[invaderNum];
+	int invaderYPos[] = new int[invaderNum];
+	
 	int currentCannonBallIndex;
 
 	static SpaceInvaders frame;
@@ -51,7 +55,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 					currentCannonBallIndex++;
 
-					if (currentCannonBallIndex >= 15) {
+					if (currentCannonBallIndex >= cannonBallXPos.length) {
 						currentCannonBallIndex = 0;
 					}
 
