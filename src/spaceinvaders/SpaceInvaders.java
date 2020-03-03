@@ -25,11 +25,12 @@ public class SpaceInvaders extends JFrame implements Runnable {
     int cannonXPos;
     int cannonYPos;
     int ballY;
-    int cannonBallXPos;
-    int cannonBallYPos;
+    int cannonBallXPos[]=new int[15];
+    int cannonBallYPos[]=new int[15];
     int invaderXPos[]= new int[10];
     int invaderYPos[]= new int[10];
-    boolean cannonBallActive;
+    boolean cannonBallActive[]= new boolean[15];
+    int currentCannonBallIndex;
    
   
     static SpaceInvaders frame;
@@ -45,20 +46,21 @@ public class SpaceInvaders extends JFrame implements Runnable {
             public void mousePressed(MouseEvent e) {
                 if (e.BUTTON1 == e.getButton()) {
                     //left button
-                 
-                  
-                  
-                      
-                  
-                 
-                    
-                                        
+                             
 // location of the cursor.
                     int xpos = e.getX();
                     int ypos = e.getY();
-                    cannonBallActive = true;
-                    cannonBallXPos = cannonXPos - XBORDER;
-                    cannonBallYPos = cannonYPos;
+                    cannonBallActive[currentCannonBallIndex] = true;
+                    cannonBallXPos[currentCannonBallIndex] = cannonXPos - XBORDER;
+                    cannonBallYPos[currentCannonBallIndex] = cannonYPos;
+                    
+                    currentCannonBallIndex++;
+                    
+                    if(currentCannonBallIndex>=15){
+                        currentCannonBallIndex=0;
+                    }
+                    
+                    
 
                 }
                 if (e.BUTTON3 == e.getButton()) {
@@ -141,15 +143,17 @@ public class SpaceInvaders extends JFrame implements Runnable {
         Image img1 = Toolkit.getDefaultToolkit().getImage("cdn4.iconfinder.com/data/icons/space-32/541/space_41-512.png");
     g.drawImage(img1, 10, 10, this);
     g.finalize();
-        
-        
-        drawCannon(getX(cannonXPos), getYNormal(cannonYPos), 0, 1, 1);
-        if(cannonBallActive){
-        drawCannonBall(getX(cannonBallXPos), getYNormal(cannonBallYPos), 0, 1, 1);
+        for(int i = 0; i < cannonBallXPos.length; i++){
+                if(cannonBallActive[i]){
+                drawCannonBall(getX(cannonBallXPos[i]), getYNormal(cannonBallYPos[i]), 0,0.5, 0.5);
+                
+            }
         }
+        drawCannon(getX(cannonXPos), getYNormal(cannonYPos), 0, 1, 1);
+        
        g.setColor(Color.BLACK);
        for(int i = 0; i < invaderXPos.length; i++){
-       drawInvader(getX(invaderXPos[i]), getYNormal(invaderYPos[i]) , 0, 0.5, 0.5);
+            drawInvader(getX(invaderXPos[i]), getYNormal(invaderYPos[i]) , 0, 0.5, 0.5);
        }
        
         gOld.drawImage(image, 0, 0, null);
@@ -233,13 +237,15 @@ public class SpaceInvaders extends JFrame implements Runnable {
     public void reset() {
        cannonXPos= getWidth2()/2;
        cannonYPos = 0;
-       cannonBallXPos = 0;
-       cannonBallActive = false;
+        for(int i = 0; i < cannonBallXPos.length; i++){
+       cannonBallActive[i] = false;
+        }
+      
       for(int i = 0; i < invaderXPos.length; i++){
        invaderXPos[i] = (int)(Math.random ()*getWidth2());
        invaderYPos[i] = (int)(Math.random ()*getHeight2()/2 + getHeight()/2);
       }
-     
+      currentCannonBallIndex=0;
     }
 /////////////////////////////////////////////////////////////////////////
     public void animate() {
@@ -254,7 +260,12 @@ public class SpaceInvaders extends JFrame implements Runnable {
             reset();
         }
         
-        cannonBallYPos+=4;
+             for(int i = 0; i < cannonBallXPos.length; i++){
+                 if(cannonBallActive[i]){
+            cannonBallYPos[i]+=4;
+        
+             }
+        }
          
     }
 
