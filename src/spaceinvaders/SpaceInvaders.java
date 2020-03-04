@@ -22,14 +22,14 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	int cannonYPos;
 	int ballY;
         int cannonBallNum=25;
-        int invaderNum=10;
+        int invaderNum=1;
 	int cannonBallXPos[] = new int[cannonBallNum];
 	int cannonBallYPos[] = new int[cannonBallNum];
         boolean cannonBallActive[] = new boolean[cannonBallNum];
         
 	int invaderXPos[] = new int[invaderNum];
 	int invaderYPos[] = new int[invaderNum];
-	
+	boolean invaderActive[]= new boolean[invaderNum];
 	int currentCannonBallIndex;
 
 	static SpaceInvaders frame;
@@ -153,7 +153,10 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		g.setColor(Color.BLACK);
 		for (int i = 0; i < invaderXPos.length; i++) {
+                    if (invaderActive[i]){
 			drawInvader(getX(invaderXPos[i]), getYNormal(invaderYPos[i]), 0, 0.5, 0.5);
+                    }
+                        
 		}
 
 		gOld.drawImage(image, 0, 0, null);
@@ -237,6 +240,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	public void reset() {
 		cannonXPos = getWidth2() / 2;
 		cannonYPos = 0;
+                
 		for (int i = 0; i < cannonBallXPos.length; i++) {
 			cannonBallActive[i] = false;
 		}
@@ -244,6 +248,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		for (int i = 0; i < invaderXPos.length; i++) {
 			invaderXPos[i] = (int)(Math.random() * getWidth2());
 			invaderYPos[i] = (int)(Math.random() * getHeight2() / 2 + getHeight() / 2);
+                        invaderActive[i]=true;
 		}
 		currentCannonBallIndex = 0;
 	}
@@ -258,10 +263,19 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 			reset();
 		}
-
+            for (int i = 0; i < cannonBallXPos.length; i++) {
+                if(cannonBallActive[i]){
+                    if(invaderActive[i]){
+                    if(cannonBallXPos[i] < invaderXPos[0]+ 10 && cannonBallXPos[i] >  invaderXPos[0]-10 && cannonBallYPos[i] > invaderYPos[0]+20 && cannonBallYPos[i] < invaderYPos[0]-20){
+                        invaderActive[0]=false;
+                    }
+                }
+                }
+                    
+            }
 		for (int i = 0; i < cannonBallXPos.length; i++) {
 			if (cannonBallActive[i]) {
-				cannonBallYPos[i] += 4;
+			cannonBallYPos[i] += 15;
 
 			}
 		}
