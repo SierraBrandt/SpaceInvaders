@@ -35,6 +35,9 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	int currentCannonBallIndex;
         
         int scoreCount;
+        int highScore;
+        
+        boolean gameWin;
 
 	static SpaceInvaders frame;
 	public static void main(String[] args) {
@@ -145,6 +148,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 			
 		}
         }
+                
 		drawCannon(getX(cannonXPos), getYNormal(cannonYPos), 0, 1, 1);
 
 		g.setColor(Color.BLACK);
@@ -154,11 +158,28 @@ public class SpaceInvaders extends JFrame implements Runnable {
                     }
                         
 		}
+                g.setFont(new Font("Gadugi", Font.PLAIN, 15));
+                g.drawString("Your score: "+scoreCount, 50, 50);
+                
+                 g.setFont(new Font("Gadugi", Font.PLAIN, 15));
+                g.drawString("High Score: " + highScore, 300, 50);
                 
                 if(gameOver){
-                drawText2(200, 400, 0, 1, 1);
-                return;
+                 g.setFont(new Font("Century Gothic", Font.PLAIN, 50));
+                 g.drawString("Game Over", 150, 350);
+                 
+                 
                 }
+                
+                if(gameWin){
+                 g.setFont(new Font("Century Gothic", Font.PLAIN, 50));
+                 g.drawString("You Win!", 150, 350);
+                 
+                }
+       
+
+                    
+                
                 
 		gOld.drawImage(image, 0, 0, null);
 
@@ -223,20 +244,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		g.rotate( - rot * Math.PI / 180.0);
 		g.translate( - xpos, -ypos);
 	}
-public void drawText2(int xpos,int ypos,double rot,double xscale,double yscale)
-    {
-        g.translate(xpos,ypos);
-        g.rotate(rot  * Math.PI/180.0);
-        g.scale( xscale , yscale );
-         Color alienblack = new Color (0, 0, 0);
-         g.setColor(alienblack);
-        g.setFont(new Font("Century Gothic", Font.PLAIN, 50));
-        g.drawString("The End", 0, 0);
-      
-        g.scale( 1.0/xscale,1.0/yscale );
-        g.rotate(-rot  * Math.PI/180.0);
-        g.translate(-xpos,-ypos);
-    }
+
 	////////////////////////////////////////////////////////////////////////////
 	// needed for     implement runnable
 	public void run() {
@@ -266,6 +274,7 @@ public void drawText2(int xpos,int ypos,double rot,double xscale,double yscale)
 		}
 		currentCannonBallIndex = 0;
                 scoreCount=0;
+                gameWin = false;
 	}
 	/////////////////////////////////////////////////////////////////////////
 	public void animate() {
@@ -293,6 +302,10 @@ public void drawText2(int xpos,int ypos,double rot,double xscale,double yscale)
                             
                             if(cannonBallXPos[i] < invaderXPos[j]+ 7 && cannonBallXPos[i] >  invaderXPos[j]-30 && cannonBallYPos[i] < invaderYPos[j]+20 && cannonBallYPos[i] > invaderYPos[j]-20){
                             invaderActive[j]=false;
+                            scoreCount++;
+                                if(scoreCount >= highScore){
+                                    highScore++;
+                                }
                             }
 
                         }
@@ -309,13 +322,17 @@ public void drawText2(int xpos,int ypos,double rot,double xscale,double yscale)
                 
                 for (int j = 0; j < invaderXPos.length; j++) {
                     
-                    invaderYPos[j]+=-0.01;
+                    invaderYPos[j]+=-0.02;
                     if(invaderYPos[j]<5){
                        gameOver=true;
                     }
+                   
         
                 }
                 
+                if(scoreCount>=invaderXPos.length){
+                    gameWin=true;
+                }
 	}
 
 	////////////////////////////////////////////////////////////////////////////
