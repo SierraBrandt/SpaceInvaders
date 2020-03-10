@@ -32,13 +32,18 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	int invaderXPos[] = new int[invaderNum];
 	int invaderYPos[] = new int[invaderNum];
 	boolean invaderActive[] = new boolean[invaderNum];
+        int moveX[] = new int[invaderNum];
 	
 	int scoreCount;
 	int highScore;
 
 	boolean gameWin;
         boolean gameOver;
+        boolean gameReturn;
+        
+       ;
 
+        
 	static SpaceInvaders frame;
 	public static void main(String[] args) {
 		frame = new SpaceInvaders();
@@ -56,6 +61,10 @@ public class SpaceInvaders extends JFrame implements Runnable {
 					// location of the cursor.
 					int xpos = e.getX();
 					int ypos = e.getY();
+                                        
+                                        if(gameOver || gameWin){
+                                            return;
+                                        }
 					cannonBallActive[currentCannonBallIndex] = true;
 					cannonBallXPos[currentCannonBallIndex] = cannonXPos - XBORDER;
 					cannonBallYPos[currentCannonBallIndex] = cannonYPos;
@@ -83,9 +92,11 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
-
+                                if(gameOver || gameWin){
+                                            return;
+                                        }
 				cannonXPos = e.getX() - XBORDER;
-
+                                
 				repaint();
 			}
 		});
@@ -151,6 +162,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 			g.setFont(new Font("Century Gothic", Font.PLAIN, 50));
 			g.drawString("You Win!", 150, 350);
                         
+                        
 		}
                 
 		for (int i = 0; i<cannonBallXPos.length; i++) {
@@ -177,9 +189,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		
 
-		if (gameWin || gameOver) {
-			return;
-		}
+		
 
 		gOld.drawImage(image, 0, 0, null);
 
@@ -261,6 +271,8 @@ public class SpaceInvaders extends JFrame implements Runnable {
                 currentCannonBallIndex = 0;
 		scoreCount = 0;
 		gameWin = false;
+                gameReturn =false;
+                
                 
 		for (int i = 0; i<cannonBallXPos.length; i++) {
 			cannonBallActive[i] = false;
@@ -270,6 +282,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 			invaderXPos[i] = (int)(Math.random() * getWidth2());
 			invaderYPos[i] = (int)(Math.random() * getHeight2() / 2 + getHeight() / 2);
 			invaderActive[i] = true;
+                        moveX[i] = 0;
 		}
 		
 	}
@@ -319,11 +332,19 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		for (int j = 0; j<invaderXPos.length; j++) {
                     if(invaderActive[j]){
-			invaderYPos[j] += -0.02;
+			invaderYPos[j] += -0.05;
                         
-			if (invaderYPos[j] < 0) {
+			if (invaderYPos[j] < 5) {
 				gameOver = true;
 			}
+                        
+                    moveX[j]+= invaderXPos[j];
+                    if (moveX[j]<invaderXPos[j]+10) {
+			invaderXPos[j] += 2;
+                    }
+                    if (moveX[j]>invaderXPos[j]+10) {
+			invaderXPos[j] -= 2;
+                    }
                     }
 		}
 
