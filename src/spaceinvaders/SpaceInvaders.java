@@ -32,7 +32,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	int invaderXPos[] = new int[invaderNum];
 	int invaderYPos[] = new int[invaderNum];
 	boolean invaderActive[] = new boolean[invaderNum];
-        int moveX[] = new int[invaderNum];
+        int moveX;
 	
 	int scoreCount;
 	int highScore;
@@ -272,7 +272,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		scoreCount = 0;
 		gameWin = false;
                 gameReturn =false;
-                
+                moveX = 3;
                 
 		for (int i = 0; i<cannonBallXPos.length; i++) {
 			cannonBallActive[i] = false;
@@ -282,7 +282,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 			invaderXPos[i] = (int)(Math.random() * getWidth2());
 			invaderYPos[i] = (int)(Math.random() * getHeight2() / 2 + getHeight() / 2);
 			invaderActive[i] = true;
-                        moveX[i] = 0;
+                        
 		}
 		
 	}
@@ -332,25 +332,27 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		for (int j = 0; j<invaderXPos.length; j++) {
                     if(invaderActive[j]){
-			invaderYPos[j] += -0.05;
-                        
-			if (invaderYPos[j] < 5) {
-				gameOver = true;
-			}
-                        
-                    moveX[j]+= invaderXPos[j];
-                    if (moveX[j]<invaderXPos[j]+10) {
-			invaderXPos[j] += 2;
-                    }
-                    if (moveX[j]>invaderXPos[j]+10) {
-			invaderXPos[j] -= 2;
-                    }
+                        invaderYPos[j]--;
                     }
 		}
 
-		if (scoreCount >= invaderXPos.length) {
-			gameWin = true;
-		}
+		boolean anyActive = false;
+                for (int j = 0; j<invaderXPos.length; j++){
+                    if(invaderActive[j]){
+                        anyActive = true;
+                    }
+                }
+                if(!anyActive)
+		gameWin = true;
+		
+                    boolean changeDir = false;
+                for (int j = 0; j<invaderXPos.length; j++){
+                    if(invaderActive[j] < 0 || invaderActive[j] > getWidth2()){
+                        changeDir = true;
+                    }
+                }
+                if(!changeDir)
+		moveX*=-1;
                 
                 
                 
