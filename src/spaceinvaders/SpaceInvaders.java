@@ -31,17 +31,17 @@ public class SpaceInvaders extends JFrame implements Runnable {
 	int invaderNum = 10;
 	int invaderXPos[] = new int[invaderNum];
 	int invaderYPos[] = new int[invaderNum];
-	boolean invaderActive[] = new boolean[invaderNum];
+        int invaderValue[] = new int[invaderNum];
+	
         int moveX;
 	
 	int scoreCount;
 	int highScore;
 
-	boolean gameWin;
         boolean gameOver;
         boolean gameReturn;
         
-       ;
+       int livesCount;
 
         
 	static SpaceInvaders frame;
@@ -62,9 +62,10 @@ public class SpaceInvaders extends JFrame implements Runnable {
 					int xpos = e.getX();
 					int ypos = e.getY();
                                         
-                                        if(gameOver || gameWin){
+                                        if(gameOver){
                                             return;
                                         }
+                                        
 					cannonBallActive[currentCannonBallIndex] = true;
 					cannonBallXPos[currentCannonBallIndex] = cannonXPos - XBORDER;
 					cannonBallYPos[currentCannonBallIndex] = cannonYPos;
@@ -92,7 +93,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
-                                if(gameOver || gameWin){
+                                if(gameOver){
                                             return;
                                         }
 				cannonXPos = e.getX() - XBORDER;
@@ -158,12 +159,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
                        
 		}
 
-		if (gameWin) {
-			g.setFont(new Font("Century Gothic", Font.PLAIN, 50));
-			g.drawString("You Win!", 150, 350);
-                        
-                        
-		}
+		
                 
 		for (int i = 0; i<cannonBallXPos.length; i++) {
 			if (cannonBallActive[i]) {
@@ -176,16 +172,22 @@ public class SpaceInvaders extends JFrame implements Runnable {
 
 		g.setColor(Color.BLACK);
 		for (int i = 0; i<invaderXPos.length; i++) {
-			if (invaderActive[i]) {
+			 {
 				drawInvader(getX(invaderXPos[i]), getYNormal(invaderYPos[i]), 0, 1,1);
+                                g.setFont(new Font("Century Gothic", Font.PLAIN, 15));
+                                g.setColor(Color.cyan);
+                                g.drawString(" " + invaderValue[i], getX(invaderXPos[i])-10, getYNormal(invaderYPos[i]));
+                                
 			}
 
 		}
+                g.setColor(Color.BLACK);
 		g.setFont(new Font("Gadugi", Font.PLAIN, 15));
 		g.drawString("Your score: " + scoreCount, 50, 50);
 
-		g.setFont(new Font("Gadugi", Font.PLAIN, 15));
 		g.drawString("High Score: " + highScore, 300, 50);
+
+		g.drawString("Lives: " + livesCount, 200, 50);
 
 		
 
@@ -241,6 +243,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		g.rotate(rot * Math.PI / 180.0);
 		g.scale(xscale, yscale);
 
+                g.setColor(Color.BLACK);
 		int xval[] = { 5, 5, 10, 10, 20, 20, 10, 10, 0, -10, -10, -20, -20, -10, -10, -5, -5, 5 };
 		int yval[] = {-10, -20, -20, -10, -10, 10, 10, 0, 5, 0, 10, 10, -10, -10, -20, -20, -10, -10};
 		g.fillPolygon(xval, yval, xval.length);
@@ -270,7 +273,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		gameOver = false;
                 currentCannonBallIndex = 0;
 		scoreCount = 0;
-		gameWin = false;
+		livesCount = 3;
                 gameReturn =false;
                 moveX = 4;
                 
@@ -281,7 +284,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		for (int i = 0; i<invaderXPos.length; i++) {
 			invaderXPos[i] = (int)(Math.random() * getWidth2());
 			invaderYPos[i] = (int)(Math.random() * getHeight2() / 2 + getHeight() / 2);
-			invaderActive[i] = true;
+                        invaderValue[i] = (int)(Math.random() * 6 + 2);
                         
 		}
 		
@@ -298,7 +301,7 @@ public class SpaceInvaders extends JFrame implements Runnable {
 			reset();
 		}
 
-		if (gameOver || gameWin) {
+		if (gameOver) {
 			return;
 		}
 
@@ -307,22 +310,23 @@ public class SpaceInvaders extends JFrame implements Runnable {
 			for (int j = 0; j<invaderXPos.length; j++) {
 
 				if (cannonBallActive[i]) {
+                                        if (cannonBallXPos[i]<invaderXPos[j] + 10 && cannonBallXPos[i] > invaderXPos[j] - 40 && cannonBallYPos[i]<invaderYPos[j] + 20 && cannonBallYPos[i] > invaderYPos[j] - 20) {
+							invaderXPos[j] = (int)(Math.random() * getWidth2());
+                                                        invaderYPos[j] = (int)(Math.random() *  getHeight() / 2  + getHeight() / 2 );
+							scoreCount+=invaderValue[j];
+                                                            if (scoreCount > highScore) {
+                                                                    highScore=scoreCount;
 
-					if (invaderActive[j]) {
 
-						if (cannonBallXPos[i]<invaderXPos[j] + 10 && cannonBallXPos[i] > invaderXPos[j] - 40 && cannonBallYPos[i]<invaderYPos[j] + 20 && cannonBallYPos[i] > invaderYPos[j] - 20) {
-							invaderActive[j] = false;
-							scoreCount++;
-							if (scoreCount > highScore) {
-								highScore++;
+                                                            
 							}
-						}
-
 					}
 				}
 			}
 
 		}
+                
+                                                            
 		for (int i = 0; i<cannonBallXPos.length; i++) {
 			if (cannonBallActive[i]) {
 				cannonBallYPos[i] += 15;
@@ -331,32 +335,27 @@ public class SpaceInvaders extends JFrame implements Runnable {
 		}
 
 		for (int j = 0; j<invaderXPos.length; j++) {
-                    if(invaderActive[j]){
-                        invaderYPos[j]--;
-                        if(invaderYPos[j] < 5 ){
-                        gameOver = true;
-                    }
-                    }
                     
+                        invaderYPos[j]-=2;
+                        if(invaderYPos[j] < 5 ){
+                            livesCount--;
+                        }
+                       if(livesCount<=0){
+                        gameOver = true;
+                        }
 		}
-
-		boolean anyActive = false;
-                for (int j = 0; j<invaderXPos.length; j++){
-                    if(invaderActive[j]){
-                        anyActive = true;
-                    }
-                }
-                if(!anyActive)
-		gameWin = true;
+                 
+                
+		
 		
                     boolean changeDir = false;
                 for (int j = 0; j<invaderXPos.length; j++){
-                    if(invaderActive[j]){
+                    
                         invaderXPos[j]+=moveX;
                             if(invaderXPos[j] < 0 || invaderXPos[j] > getWidth2()) {
                                 changeDir = true;
                             }
-                    }
+                    
                     
                 }
                  if(changeDir)
